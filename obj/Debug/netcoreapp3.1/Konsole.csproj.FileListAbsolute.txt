@@ -1,0 +1,13 @@
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.exe
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.deps.json
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.runtimeconfig.json
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.runtimeconfig.dev.json
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.dll
+C:\Users\mateu\Documents\CS\Aer\Konsole\bin\Debug\netcoreapp3.1\Konsole.pdb
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.csprojAssemblyReference.cache
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.AssemblyInfoInputs.cache
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.AssemblyInfo.cs
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.csproj.CoreCompileInputs.cache
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.dll
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.pdb
+C:\Users\mateu\Documents\CS\Aer\Konsole\obj\Debug\netcoreapp3.1\Konsole.genruntimeconfig.cache

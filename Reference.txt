@@ -1,0 +1,627 @@
+﻿using System;
+using System.Linq;
+using System.Numerics;
+using System.Collections.Generic;
+using System.Text;
+using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices.WindowsRuntime;
+
+namespace KonsoleApp
+
+{
+    public class Utils
+    {
+
+        public static string PaintToolStart()
+        {
+
+            Konsole.Clear();
+            Konsole.CenterLine("> [Q]uit. <", "dark red", "white", 28);
+            Console.CursorVisible = true;
+            Console.CursorLeft = 0;
+            Console.CursorTop = 0;
+            ConsoleKeyInfo _curKey;
+            string availableChars = "wWVvdbBcCgGmMrRyY";
+
+            while (42 == 42)
+            {
+                _curKey = Console.ReadKey(true);
+
+
+                if (_curKey.KeyChar == 'q')
+                {
+                    Konsole.Clear();
+                    return "quit";
+                }
+                else if (availableChars.Contains(_curKey.KeyChar))
+                {
+                    Konsole.Paint(Console.CursorLeft, Console.CursorTop,
+                        _curKey.KeyChar.ToString(), false);
+                    Console.ResetColor();
+                } else if (_curKey.Key == ConsoleKey.Spacebar)
+                {
+                    Konsole.Paint(Console.CursorLeft, Console.CursorTop,
+                        "d", false);
+                    Console.ResetColor();
+                } else if (_curKey.Key == ConsoleKey.UpArrow && !(Console.CursorTop == 0))
+                {
+                    Console.CursorTop--;
+                } else if (_curKey.Key == ConsoleKey.DownArrow && !(Console.CursorTop == Console.WindowHeight-1))
+                    {
+                        Console.CursorTop++;
+                    } else if (_curKey.Key == ConsoleKey.RightArrow && !(Console.CursorLeft == Console.WindowWidth-1))
+                    {
+                        Console.CursorLeft++;
+                    } else if (_curKey.Key == ConsoleKey.LeftArrow && !(Console.CursorLeft == 0))
+                    {
+                        Console.CursorLeft--;
+                    }
+
+            }
+        }
+
+
+        public class Vector2
+        {
+            public int X = 0;
+            public int Y = 0;
+
+            public Vector2(int _X, int _Y)
+            {
+                X = _X;
+                Y = _Y;
+            }
+        }
+
+        public static ConsoleColor GetKonsoleColor(string _color)
+        {
+            switch (_color)
+            {
+                case "white":
+                case "w":
+                case " ":
+                    return ConsoleColor.White;
+                case "black":
+                case "b":
+                case "d":
+                    return ConsoleColor.Black;
+                case "blue":
+                case "bl":
+                    return ConsoleColor.Blue;
+                case "cyan":
+                case "c":
+                    return ConsoleColor.Cyan;
+                case "dark blue":
+                case "dbl":
+                    return ConsoleColor.DarkBlue;
+                case "dark cyan":
+                case "dc":
+                    return ConsoleColor.DarkCyan;
+                case "dark gray":
+                case "dgr":
+                case "v":
+                    return ConsoleColor.DarkGray;
+                case "dark green":
+                case "dg":
+                    return ConsoleColor.DarkGreen;
+                case "dark magenta":
+                case "dm":
+                    return ConsoleColor.DarkMagenta;
+                case "dark red":
+                case "dr":
+                    return ConsoleColor.DarkRed;
+                case "dark yellow":
+                case "dy":
+                    return ConsoleColor.DarkYellow;
+                case "gray":
+                case "gr":
+                    return ConsoleColor.Gray;
+                case "green":
+                case "g":
+                    return ConsoleColor.Green;
+                case "magenta":
+                case "m":
+                    return ConsoleColor.Magenta;
+                case "red":
+                case "r":
+                    return ConsoleColor.Red;
+                case "yellow":
+                case "y":
+                    return ConsoleColor.Yellow;
+            }
+
+            return ConsoleColor.White;
+        }
+
+    }
+
+    class Konsole
+    {
+        // Substitute Console Parameters
+        public static int CursorY
+        {
+            get 
+            {
+                return Console.CursorTop; 
+            }
+            
+            set => Console.CursorTop = value;
+            
+        }
+        public static int CursorX
+        {
+            get => Console.CursorLeft;
+            set => Console.CursorLeft = value;
+
+        }
+
+       
+
+
+        // > Local Variables <
+        //private static Utils.Vector2 LastCursorPosition = new Utils.Vector2(1, 1);
+
+        // > Parameters <
+        public static string Margin = "  ";
+        public static string Indent = "    ";
+        public static string DefaultForegroundColor = "white";
+        public static string DefaultBackgroundColor = "black";
+        public static string DefaultAskLinePrefix = "> ";
+        public static string DefaultAskLineForegroundColor = "white";
+        public static string DefaultAskLineBackgroundColor = "dark green";
+        public static string DefaultAnnounceForegroundColor = "red";
+        public static string DefaultAnnounceBackgroundColor = "white";
+
+        // > Initialization Method <
+        // : for quickly initializing properties.
+        public static void Init(string _margin = "  ",
+            string _indent = "    ",
+            string _defaultForegroundColor = "white",
+            string _defaultBackgroundColor = "dark blue",
+            string _defaultAskLineString = "> ",
+            string _defaultAskLineForegroundColor = "cyan",
+            string _defaultAskLineBackgroundColor = "dark green")
+        {
+            Margin = _margin;
+            Indent = _indent;
+            DefaultForegroundColor = _defaultForegroundColor;
+            DefaultBackgroundColor = _defaultBackgroundColor;
+            DefaultAskLinePrefix = _defaultAskLineString;
+            DefaultAskLineForegroundColor = _defaultAskLineForegroundColor;
+            DefaultAskLineBackgroundColor = _defaultAskLineBackgroundColor;
+        }
+
+
+        public static void Clear()
+        {
+            Console.Clear();
+            Console.WriteLine(Margin);
+        }
+
+        public static void ClearLine(int _cursorTopToClear = 0)
+        {
+            int LastCursorPositionTop = Console.CursorTop;
+            Console.CursorTop = _cursorTopToClear;
+            Console.CursorLeft = 0;
+
+            for (int i = 1; i <= Console.WindowWidth; i++)
+            {
+                Console.Write(" ");
+            }
+
+            Console.CursorTop = LastCursorPositionTop;
+            Console.CursorLeft = 0;
+        }
+
+        public static void NewLine(string _sentence = " ",
+            string _foregroundColor = "",
+            string _backgroundColor = "")
+        {
+            // > Initial Settings <
+
+            Console.CursorLeft = 0;
+            if (_foregroundColor == "")
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(DefaultForegroundColor);
+            }
+            else
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(_foregroundColor);
+            }
+
+            if (_backgroundColor == "")
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(DefaultBackgroundColor);
+            }
+            else
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(_backgroundColor);
+            }
+
+            if (Console.CursorTop == 0)
+            {
+                Console.CursorTop = 1;
+            }
+
+
+            // > Functionality <
+            _sentence = _sentence.Replace("\n", "\n" + Margin);
+            Console.WriteLine(Margin + _sentence);
+            Console.ResetColor();
+
+
+        }
+
+
+        public static void InLine(string _sentence = " ",
+            string _foregroundColor = "",
+            string _backgroundColor = "")
+        {
+            if (_foregroundColor == "")
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(DefaultForegroundColor);
+            }
+            else
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(_foregroundColor);
+            }
+
+            if (_backgroundColor == "")
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(DefaultBackgroundColor);
+            }
+            else
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(_backgroundColor);
+            }
+
+            Console.Write(_sentence);
+
+        }
+
+        public static void InLine(int _positionX, int _positionY,
+            string _sentence = "", string _foregroundColor = "",
+            string _backgroundColor = "", bool _returnCursor = true)
+        {
+
+            Utils.Vector2 LastCursorPosition =
+                new Utils.Vector2(Console.CursorLeft, Console.CursorTop);
+
+            Console.CursorLeft = _positionX;
+            Console.CursorTop = _positionY;
+
+            if (_foregroundColor == "")
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(DefaultForegroundColor);
+            }
+            else
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(_foregroundColor);
+            }
+
+            if (_backgroundColor == "")
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(DefaultBackgroundColor);
+            }
+            else
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(_backgroundColor);
+            }
+
+            Console.Write(_sentence);
+            Console.ResetColor();
+
+            if (_returnCursor)
+            {
+                Console.CursorLeft = LastCursorPosition.X;
+                Console.CursorTop = LastCursorPosition.Y;
+            }
+
+        }
+
+
+        public static string AskLine(string _prefix = "&¨¨42¨",
+            string _foregroundColor = "",
+            string _backgroundColor = "")
+        {
+
+            if (Console.CursorTop == 0)
+            {
+                Console.CursorTop = 1;
+            }
+
+            if (_prefix == "&¨¨42¨")
+            {
+                _prefix = DefaultAskLinePrefix;
+            }
+
+            if (_foregroundColor == "")
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(DefaultAskLineForegroundColor);
+            }
+            else
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(_foregroundColor);
+            }
+
+            if (_backgroundColor == "")
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(DefaultAskLineBackgroundColor);
+            }
+            else
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(_backgroundColor);
+            }
+
+            Console.CursorLeft = 0;
+            Console.Write(Margin + _prefix);
+            Console.ResetColor();
+            Console.Write(" ");
+            string _input = Console.ReadLine();
+            
+            if (Console.CursorTop != 0) 
+            {
+                Console.CursorLeft = 0;
+                Console.CursorTop -= 1;
+                Console.ForegroundColor = Utils.GetKonsoleColor(DefaultForegroundColor);
+                Console.BackgroundColor = Utils.GetKonsoleColor(DefaultBackgroundColor);
+                Console.Write(Margin + _prefix);
+                Console.ResetColor();
+                Console.CursorTop += 1;
+            } else
+            {
+                Console.CursorLeft = 0;
+                Console.ForegroundColor = Utils.GetKonsoleColor(DefaultForegroundColor);
+                Console.BackgroundColor = Utils.GetKonsoleColor(DefaultBackgroundColor);
+                Console.Write(Margin + _prefix);
+                Console.ResetColor();
+            }
+
+            return _input;
+
+        }
+
+        public static void CenterLine(string _sentence,
+            string _foregroundColor = "",
+            string _backgroundColor = "", int _posY = 999)
+        {
+
+            if (_posY == 999)
+            {
+                _posY = Console.CursorTop;
+            } else if (_posY < Console.WindowHeight)
+            {
+                Console.CursorTop = _posY;
+            }
+
+            if (!_sentence.Contains('\n'))
+            {
+                if (_foregroundColor == "")
+                {
+                    Console.ForegroundColor =
+                        Utils.GetKonsoleColor(DefaultForegroundColor);
+                }
+                else
+                {
+                    Console.ForegroundColor =
+                        Utils.GetKonsoleColor(_foregroundColor);
+                }
+
+                if (_backgroundColor == "")
+                {
+                    Console.BackgroundColor =
+                        Utils.GetKonsoleColor(DefaultBackgroundColor);
+                }
+                else
+                {
+                    Console.BackgroundColor =
+                        Utils.GetKonsoleColor(_backgroundColor);
+                }
+
+
+                Console.SetCursorPosition((Console.WindowWidth / 2)
+                    - (_sentence.Length / 2), Console.CursorTop);
+
+                Console.WriteLine(_sentence);
+                Console.ResetColor();
+
+            }
+            else
+            {
+                string[] _lines = _sentence.Split('\n');
+
+                foreach (string _line in _lines)
+                {
+                    if (_foregroundColor == "")
+                    {
+                        Console.ForegroundColor =
+                            Utils.GetKonsoleColor(DefaultForegroundColor);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor =
+                            Utils.GetKonsoleColor(_foregroundColor);
+                    }
+
+                    if (_backgroundColor == "")
+                    {
+                        Console.BackgroundColor =
+                            Utils.GetKonsoleColor(DefaultBackgroundColor);
+                    }
+                    else
+                    {
+                        Console.BackgroundColor =
+                            Utils.GetKonsoleColor(_backgroundColor);
+                    }
+
+
+                    Console.SetCursorPosition((Console.WindowWidth / 2)
+                        - (_line.Length / 2), Console.CursorTop);
+
+                    Console.WriteLine(_line);
+                    Console.ResetColor();
+
+                }
+
+
+
+            }
+
+        }
+
+
+        public static void Announce(int _positionY = 0,
+            string _message = ">>> ...PAUSE... <<<",
+            string _foregroundColor = "",
+            string _backgroundColor = "")
+        {
+            Konsole.ClearLine(_positionY);
+            
+            int LastCursorPositionY = Console.CursorTop;
+            Console.CursorVisible = false;
+
+            Console.CursorTop = _positionY;
+            Console.CursorLeft = 0;
+
+            if (_foregroundColor == "")
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(DefaultAnnounceForegroundColor);
+            }
+            else
+            {
+                Console.ForegroundColor =
+                    Utils.GetKonsoleColor(_foregroundColor);
+            }
+
+            if (_backgroundColor == "")
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(DefaultAnnounceBackgroundColor);
+            }
+            else
+            {
+                Console.BackgroundColor =
+                    Utils.GetKonsoleColor(_backgroundColor);
+            }
+
+            Konsole.CenterLine(_message, _foregroundColor, _backgroundColor);
+            Console.CursorTop = LastCursorPositionY;
+            Console.ReadKey();
+            Konsole.ClearLine(_positionY);
+            Console.CursorVisible = true;
+
+        }
+
+
+        public static void Paint(int _positionX, int _positionY,
+            string _frame, bool _resetLeftPosition = true, char _glyph = ' ')
+        {
+            Console.CursorLeft = _positionX;
+            Console.CursorTop = _positionY;
+
+            foreach (char c in _frame)
+            {
+                string _paintThisColor;
+
+                switch (c)
+                {
+                    case '0':
+                    case 'w':
+                    case ' ':
+                        _paintThisColor = "white";
+                        break;
+                    case '1':
+                    case 'W':
+                    case 'v':
+                        _paintThisColor = "gray";
+                        break;
+                    case '2':
+                    case 'd':
+                        _paintThisColor = "black";
+                        break;
+                    case 'b':
+                        _paintThisColor = "blue";
+                        break;
+                    case 'c':
+                        _paintThisColor = "cyan";
+                        break;
+                    case 'g':
+                        _paintThisColor = "green";
+                        break;
+                    case 'm':
+                        _paintThisColor = "magenta";
+                        break;
+                    case 'r':
+                        _paintThisColor = "red";
+                        break;
+                    case 'y':
+                        _paintThisColor = "yellow";
+                        break;
+                    case 'B':
+                        _paintThisColor = "dark blue";
+                        break;
+                    case 'C':
+                        _paintThisColor = "dark cyan";
+                        break;
+                    case 'G':
+                        _paintThisColor = "dark green";
+                        break;
+                    case 'M':
+                        _paintThisColor = "dark magenta";
+                        break;
+                    case 'R':
+                        _paintThisColor = "dark red";
+                        break;
+                    case 'Y':
+                        _paintThisColor = "dark yellow";
+                        break;
+                    case 'V':
+                        _paintThisColor = "dark gray";
+                        break;
+                    default:
+                        _paintThisColor = "black";
+                        break;
+                }
+
+
+                if (c == '\n')
+                {
+                    
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    Console.CursorLeft = _positionX;
+                }
+
+                Console.BackgroundColor 
+                    = Utils.GetKonsoleColor(_paintThisColor);
+                
+                Console.Write(" ");
+
+            }
+
+            if (_resetLeftPosition == true)
+                Console.CursorLeft = 0;
+
+
+        }
+
+    }
+
+}
