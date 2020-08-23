@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
+using System.Dynamic;
 
 namespace MadKonsole {
 
@@ -141,10 +142,17 @@ namespace MadKonsole {
         public char HorizontalLine = '¨';
         public char ShadowChar = '¨';
         public char FillingChar = '¨';
+        public int BotPosX {
+            get => PosX+1;
+        }
+        public int BotPosY {
+            get => PosY + Height;
+        }
+
 
         public void Draw() {
             //
-
+            Console.CursorVisible = false;
 
             static void WriteShadowChar(char _DarkColor, char _LightColor, char _BackgroundColor) {
                 Console.BackgroundColor = Kolor.GetColor(_DarkColor);
@@ -309,8 +317,10 @@ namespace MadKonsole {
                 Console.CursorTop = _cursPosTop;
                 Console.CursorLeft = _cursPosLeft;
 
+                
             }
 
+            Console.CursorVisible = true;
             DrawTextOnTheBox();
             Konsole.ResetColor();
             // END OF BOX CLASS
@@ -318,9 +328,6 @@ namespace MadKonsole {
         }
 
     }
-
-
-
 
 
     class Konsole {
@@ -387,15 +394,9 @@ namespace MadKonsole {
             get => Console.WindowHeight;
             set {
                 Console.WindowHeight = value;
-                Console.BufferHeight = value;
+                Console.BufferHeight = value+1;
 
             }
-        }
-        public static int MiddleWidth {
-            get => (Console.WindowWidth/2);
-        }
-        public static int MiddleHeight {
-            get => (Console.WindowHeight/2);
         }
         public static void DisableResizing() {
             Utils.DisableServices(true, false, false, true); }
@@ -419,7 +420,7 @@ namespace MadKonsole {
                     CleanScreen = (CleanScreen + " ");
                 }
 
-                CleanScreen = (CleanScreen + "\n");
+                CleanScreen = (CleanScreen + " ");
             }
             
             Console.ForegroundColor = Kolor.GetColor(Default.GlyphColor);
@@ -427,7 +428,7 @@ namespace MadKonsole {
             Console.Write(CleanScreen);
             Console.CursorLeft = 0;
             Console.CursorTop = 0;
-            Console.Write("\n" + Default.Margin);
+            Console.Write(Default.Margin);
         }
 
         public static void ClearLine(int _Line) {
@@ -612,17 +613,23 @@ namespace MadKonsole {
         public static string AskLine(bool _RepositionCursor, 
             int _PosX = 999, int _PosY = 999,
             string _Prefix = "¨¨&42&¨¨", char _GlyphColor = '.', 
-            char _CellColor = '.') {
+            char _CellColor = '.', char _InputGlyphColor = '.', 
+            char _InputCellColor = '.') {
             //
+            Console.CursorVisible = false;
 
             int _oldLeft = Console.CursorLeft;
             int _oldTop = Console.CursorTop;
 
             if (_PosX != 999) {
+                Console.CursorVisible = false;
                 Console.CursorLeft = _PosX;
+                Console.CursorVisible = true;
             }
             if (_PosY != 999) {
+                Console.CursorVisible = false;
                 Console.CursorTop = _PosY;
+                Console.CursorVisible = true;
             }
 
             if (Kolor.VALID_COLORS.Contains(_GlyphColor)) {
@@ -643,22 +650,35 @@ namespace MadKonsole {
                 Console.Write(_Prefix);
             }
             
-            Konsole.ResetColor();
+            if (_InputCellColor == '.') {
+                Konsole.ResetColor();
+            } else {
+                Console.BackgroundColor = Kolor.GetColor(_InputCellColor);
+            }
+
+            if (_InputGlyphColor == '.') {
+                Konsole.ResetColor();
+            } else {
+                Console.ForegroundColor = Kolor.GetColor(_InputGlyphColor);
+            }
 
             Console.Write(" ");
 
+            Console.CursorVisible = true;
             string _Input = Console.ReadLine();
-            
+
+            Konsole.ResetColor();
+
             if (_RepositionCursor) {
+                Console.CursorVisible = false;
                 Console.CursorLeft = _oldLeft;
                 Console.CursorTop = _oldTop;
+                Console.CursorVisible = true;
             }
-
+            
             return _Input;
         
         }
-
-
 
         public static int PopUp(string _Message, string _OptionOne, 
             string _OptionTwo = "", string _OptionThree = "") {
@@ -668,6 +688,8 @@ namespace MadKonsole {
             
             return 42;
         }
+
+
 
     }
 
